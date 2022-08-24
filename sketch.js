@@ -23,6 +23,8 @@ function drawBell(i) {
   const centerX = width / 2;
   const centerY = height / 2;
   const radius = 200 * noise(i / 300) + 100;
+  const anchorRadius = 1000 * noise(i / 300) + 100;
+
   const radius2 = 20 * noise(i / 300) + 20;
 
   
@@ -32,6 +34,7 @@ function drawBell(i) {
   for (let angle = 1; angle <= 360; angle += 0.2) {
     const x = centerX + radius * cos(radians(angle));
     const y = centerY + radius * sin(radians(angle)) + (200 - noise(radians(angle), i / 100) * 400);
+
     const noiseStrokeR = noise(radians(angle));
     const noiseStrokeG = noise(i / 100);
     const noiseStrokeB = noise(radians(angle), i / 100);
@@ -45,10 +48,10 @@ function drawBell(i) {
     const noiseY = noise(radius / 100) * 100;
     const noiseY2 = 50 - noise(radius / 100, i / 120) * 100;
     const noiseX = 500 - noise(radians(angle), i / 120) * 1000;
-    curveVertex(centerX, centerY + 200);
-    curveVertex(centerX, centerY - 120 + noiseY);
-    curveVertex(x, y / 10 + 500 + noiseY2);
-    curveVertex(x + noiseX, y / 10 + 1000);
+    curveVertex(centerX, centerY);
+    curveVertex(centerX, centerY+ noiseY);
+    curveVertex(x, y + noiseY2);
+    curveVertex(x + noiseX, y + noiseY);
     endShape();
   }
 }
