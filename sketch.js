@@ -1,87 +1,79 @@
 function setup() {
   createCanvas(window.innerWidth, window.innerHeight);
-  frameRate(100);
-  stroke(255, 20);
+  frameRate(10);
+  stroke(255);
   strokeWeight(1);
   noFill();
+  noiseDetail(24);
 }
 
-let i = 0;
+let x = 0;
+let y = 1000;
+let anchor = 500;
+let inc = 0.1;
+
 function draw() {
-  i++;
   background(0);
 
   // draw the jellyfish bell
-  drawBell(i);
+  drawBell(x, y, anchor);
 
 
+  x += inc;
+  y += inc;
+  anchor += inc;
 }
 
 
-function drawBell(i) {
+function drawBell(xOffset, yOffset, anchorOffset) {
 
   const centerX = width / 2;
   const centerY = height / 2;
-  const radius = 200 * noise(i / 300) + 100;
-  const anchorRadius = 1000 * noise(i / 300) + 100;
-
-  const radius2 = 20 * noise(i / 300) + 20;
-
-  
-  translate(0, -150);
+  const radius = 200;
 
 
-  for (let angle = 1; angle <= 360; angle += 0.2) {
-    const x = centerX + radius * cos(radians(angle));
-    const y = centerY + radius * sin(radians(angle)) + (200 - noise(radians(angle), i / 100) * 400);
+  for (let angle = 0; angle <= 180; angle += 90) {
+    // const anchorRadius = 1000;
+    const anchorRadius = noise(anchorOffset/100, anchorOffset/100) * 400 + 600;   // get two random radii for the anchorpoints
+    const anchorRadius2 = noise(anchorOffset/100, anchorOffset/100) * 400 + 600;    // between 600-1000, and 400-800
+    
+    // generate noise
+    const anchorNoise = noise(radians(angle), xOffset/1000) * 400 - 200;
+    const anchorNoise2 = noise(radians(angle), yOffset/1000) * 400 - 200;
+    const noiseX = noise(radians(angle), xOffset/1000) * 200 - 100;
+    const noiseY = noise(radians(angle), yOffset/1000) * 200 - 100;
+    const noiseX2 = noise(radians(angle+180), xOffset/1000) * 200 - 100;
+    const noiseY2 = noise(radians(angle+180), yOffset/1000) * 200 - 100;
 
-    const noiseStrokeR = noise(radians(angle));
-    const noiseStrokeG = noise(i / 100);
-    const noiseStrokeB = noise(radians(angle), i / 100);
-    stroke(
-      Math.round(255 * noiseStrokeR + 10),
-      Math.round(120 * noiseStrokeB + 40),
-      Math.round(255 * noiseStrokeG),
-      60
-    );
-    beginShape();
-    const noiseY = noise(radius / 100) * 100;
-    const noiseY2 = 50 - noise(radius / 100, i / 120) * 100;
-    const noiseX = 500 - noise(radians(angle), i / 120) * 1000;
-    curveVertex(centerX, centerY);
-    curveVertex(centerX, centerY+ noiseY);
-    curveVertex(x, y + noiseY2);
-    curveVertex(x + noiseX, y + noiseY);
-    endShape();
-  }
-}
+    // set position of curve anchor points
+    const anchor1 = {
+      x:centerX + anchorRadius * cos(radians(angle))+anchorNoise, 
+      y:centerY + anchorRadius * sin(radians(angle))+anchorNoise
+    };
+    const anchor2 = {
+      x: centerX + anchorRadius2 * cos(radians(angle + 180))+anchorNoise2, 
+      y: centerY + anchorRadius2 * sin(radians(angle + 180))+anchorNoise2
+    };
 
+    // set position of curve endpoints
+    const p1 = {
+      x: centerX + radius * cos(radians(angle)+noiseX), 
+      y:centerY + radius * sin(radians(angle)+noiseY)
+    };
+    const p2 = {
+      x: centerX + radius * cos(radians(angle+180)+noiseX), 
+      y: centerY + radius * sin(radians(angle+180)+noiseY)
+    };
 
-function drawTentacles() {
-    // draw the jellyfish tentacles
-  for (let angle = 1; angle <= 360; angle += 20) {
-    const x = centerX + radius2 * 3 * cos(radians(angle));
-    const x2 = centerX + (radius2 / 2) * cos(radians(angle));
-    const y = centerY + radius2 * sin(radians(angle));
-    const noiseStrokeR = noise(angle / 200);
-    const noiseStrokeG = noise(i / 100);
-    const noiseStrokeB = noise(angle / 200, i / 100);
-    stroke(
-      Math.round(255 * noiseStrokeR + 10),
-      Math.round(120 * noiseStrokeB + 40),
-      Math.round(255 * noiseStrokeG),
-      120
-    );
-    strokeWeight(2);
-    beginShape();
-    const noiseY = noise(radius / 100) * 100;
-    const noiseY2 = 50 - noise(i / 200, angle) * 100;
-    const noiseX = 1000 - noise(radians(angle), i / 200) * 2000;
-    const noiseX2 = 100 - noise(radians(360 - angle), i / 200) * 200;
-    curveVertex(x2, centerY + 200);
-    curveVertex(x2, centerY - 120 + noiseY);
-    curveVertex(x + noiseX2, y / 1.1 + 500 + noiseY2);
-    curveVertex(x + noiseX, y / 10 + 1000);
-    endShape();
+    stroke(255)
+    curve(anchor1.x, anchor1.y, p1.x, p1.y, p2.x, p2.y, anchor2.x, anchor2.y); // Draw a single curve
+
+    circle(anchor1.x, anchor1.y, 10);
+    circle(anchor2.x, anchor2.y, 10);
+
+    stroke(0,0,255)
+    line(anchor1.x, anchor1.y, p1.x, p1.y);
+    line(anchor2.x, anchor2.y, p2.x, p2.y);
+    
   }
 }
