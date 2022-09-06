@@ -15,12 +15,12 @@ function draw() {
 
   // Draw the creature
   background(0);
-  drawCreature(x, y, anchor);
+  drawCreature(xOffset, yOffset, anchorOffset);
 
   // Simulate the creature's movment by incrementing the values over time
-  x += inc;
-  y += inc;
-  anchor += inc;
+  xOffset += inc;
+  yOffset += inc;
+  anchorOffset += inc;
 }
 
 /**
