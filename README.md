@@ -1,4 +1,4 @@
-# Jean-Jacket
+# Jean-Jacket :flying_saucer:
 
 A generative art project inspired by the alien Jean Jacket from the film Nope (2022) by Jordan Peele.
 
